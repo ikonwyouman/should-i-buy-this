@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Should I Buy This — Decision Ledger</title>
+  <meta name="description" content="A continuous scoring purchase decision ledger that balances cost per use against monthly budget share using smooth ramps.">
+  <meta name="theme-color" content="#171813">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2224%22 height=%2228%22 x=%224%22 y=%222%22 fill=%22%231e2019%22 stroke=%22%2338392f%22 stroke-width=%221.5%22/><path d=%22M8 9h16M8 14h16M8 19h10M8 24h16%22 stroke=%22%23d8ab63%22 stroke-width=%221.5%22 stroke-dasharray=%222 2%22/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="receipt-wrapper">
+    <article class="receipt" aria-label="Purchase decision receipt ledger">
+      <!-- Serrated torn edge at top -->
+      <div class="receipt-tear receipt-tear-top" aria-hidden="true"></div>
+
+      <div class="receipt-body">
+        <!-- Receipt Header -->
+        <header class="receipt-header">
+          <h1 class="receipt-title">Should I Buy This</h1>
+          <p class="receipt-subtitle">Purchase Decision Ledger</p>
+          <div class="receipt-meta">
+            <span>REGISTER 01</span>
+            <span id="receipt-date-time">ENTRY 2026.09.28</span>
+          </div>
+        </header>
+
+        <div class="perforation" aria-hidden="true"></div>
+
+        <!-- Quick Scenarios (Plain text brackets) -->
+        <div class="preset-section">
+          <span class="preset-label">Test Scenarios:</span>
+          <div class="preset-links">
+            <button type="button" class="preset-link" data-preset="case-a1">[$15 @ 14%]</button>
+            <button type="button" class="preset-link" data-preset="case-a2">[$15 @ 16%]</button>
+            <button type="button" class="preset-link" data-preset="case-b">[$1/use @ 70%]</button>
+            <button type="button" class="preset-link" data-preset="case-c">[Danger Zone]</button>
+            <button type="button" class="preset-link" data-preset="sleep-case">[Sleep on it]</button>
+          </div>
+        </div>
+
+        <div class="perforation" aria-hidden="true"></div>
+
+        <!-- Inputs Form -->
+        <form id="calculator-form" novalidate>
+          <div class="form-rows">
+            <!-- Item Name -->
+            <div class="form-row">
+              <label for="item-name" class="field-label">Item description</label>
+              <input
+                type="text"
+                id="item-name"
+                name="itemName"
+                placeholder="Optional name"
+                maxlength="60"
+                autocomplete="off"
+                class="field-input text-input"
+              >
+            </div>
+
+            <!-- Price -->
+            <div class="form-row">
+              <label for="price" class="field-label">Price ($) *</label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                min="0.01"
+                step="0.01"
+                inputmode="decimal"
+                placeholder="0.00"
+                required
+                class="field-input mono-input"
+              >
+            </div>
+
+            <!-- Expected Uses Per Month -->
+            <div class="form-row">
+              <label for="uses-per-month" class="field-label">Expected uses / month *</label>
+              <input
+                type="number"
+                id="uses-per-month"
+                name="usesPerMonth"
+                min="0.01"
+                step="any"
+                inputmode="decimal"
+                placeholder="e.g. 4 or 2.5"
+                required
+                class="field-input mono-input"
+              >
+            </div>
+
+            <!-- Months You'll Realistically Use It -->
+            <div class="form-row">
+              <label for="months" class="field-label">Months of use</label>
+              <input
+                type="number"
+                id="months"
+                name="months"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                placeholder="12 (default)"
+                class="field-input mono-input"
+              >
+            </div>
+
+            <!-- Money Left This Month -->
+            <div class="form-row">
+              <label for="budget" class="field-label">Money left this month ($)</label>
+              <input
+                type="number"
+                id="budget"
+                name="budget"
+                min="0.01"
+                step="0.01"
+                inputmode="decimal"
+                placeholder="Optional"
+                class="field-input mono-input"
+              >
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="save-btn" class="ledger-btn primary-btn">
+              Calculate Decision
+            </button>
+            <button type="button" id="reset-btn" class="ledger-btn secondary-btn">
+              Reset
+            </button>
+          </div>
+        </form>
+
+        <div class="perforation" aria-hidden="true"></div>
+
+        <!-- Decision Calculation Section -->
+        <section id="results-section" class="results-slip" aria-live="polite">
+          <div class="slip-header">
+            <span class="slip-title">Calculation Breakdown</span>
+          </div>
+
+          <!-- Danger alert (if active) -->
+          <div id="danger-zone-alert" class="danger-slip-notice hidden" role="alert">
+            <span class="danger-flag">! DANGER ZONE ACTIVE</span>
+            <p class="danger-msg">Item exceeds 60% of remaining monthly funds. Affordability safety floor strictly caps verdict.</p>
+          </div>
+
+          <!-- 4 Raw Numbers: Dotted ledger lines -->
+          <div class="ledger-lines">
+            <div class="ledger-line" id="metric-line-uses">
+              <span class="line-name">Total expected uses</span>
+              <span class="line-fill" aria-hidden="true"></span>
+              <span class="line-num"><span id="metric-total-uses">—</span> uses</span>
+            </div>
+            <div class="ledger-line highlight-metric" id="metric-line-cost">
+              <span class="line-name">Cost per use</span>
+              <span class="line-fill" aria-hidden="true"></span>
+              <span class="line-num" id="metric-cost-per-use">—</span>
+            </div>
+            <div class="ledger-line" id="metric-line-budget">
+              <span class="line-name">Money left consumed</span>
+              <span class="line-fill" aria-hidden="true"></span>
+              <span class="line-num" id="metric-budget-share">—</span>
+            </div>
+            <div class="ledger-line" id="metric-line-opportunity">
+              <span class="line-name">Opportunity cost</span>
+              <span class="line-fill" aria-hidden="true"></span>
+              <span class="line-num" id="metric-opportunity">—</span>
+            </div>
+          </div>
+
+          <!-- Rubber Stamp Verdict -->
+          <div class="stamp-stage">
+            <div id="verdict-banner" class="rubber-stamp verdict-empty">
+              <span id="verdict-text" class="stamp-label">Awaiting Input</span>
+            </div>
+          </div>
+
+          <!-- Plain Conversational Narrative Reasoning -->
+          <div class="reasoning-envelope">
+            <p id="reasoning-text" class="reasoning-paragraph">
+              Fill in price and usage frequency above to calculate whether this purchase is justified.
+            </p>
+          </div>
+
+          <!-- Receipt Slip Utility Actions -->
+          <div class="slip-utility-row">
+            <button type="button" id="print-slip-btn" class="receipt-text-link print-btn">[Print Slip / PDF]</button>
+          </div>
+
+          <!-- Continuous scoring mechanics reference -->
+          <details class="mechanics-disclosure">
+            <summary class="mechanics-summary">Continuous scoring mechanics</summary>
+            <div class="mechanics-body">
+              <p>Continuous mathematical ramps eliminate arbitrary cliff edges:</p>
+              <div class="mechanic-row"><span>Cost/use ≤ $0.50</span><span>10/10 value</span></div>
+              <div class="mechanic-row"><span>$0.50 to $20.00</span><span>Interpolate 10 down to 2</span></div>
+              <div class="mechanic-row"><span>$20.00 to $50.00</span><span>Interpolate 2 down to 0</span></div>
+              <div class="mechanic-row"><span>Unentered money</span><span>Neutral caution (5/10)</span></div>
+              <div class="mechanic-row"><span>Share ≤ 5%</span><span>10/10 affordability</span></div>
+              <div class="mechanic-row"><span>5% to 75% share</span><span>Interpolate 10 down to 0</span></div>
+              <div class="mechanic-row danger-rule"><span>Share > 60%</span><span>Hard safety cap (Max score 3.0)</span></div>
+            </div>
+          </details>
+        </section>
+
+        <div class="perforation" aria-hidden="true"></div>
+
+        <!-- History Ledger -->
+        <section class="history-section" aria-labelledby="history-heading">
+          <div class="history-title-row">
+            <h2 id="history-heading" class="history-heading">Decision History</h2>
+            <div class="history-actions-bar">
+              <button type="button" id="export-csv-btn" class="receipt-text-link" title="Export decisions to CSV spreadsheet">[CSV]</button>
+              <button type="button" id="backup-json-btn" class="receipt-text-link" title="Save JSON backup of this ledger">[Backup]</button>
+              <button type="button" id="restore-json-btn" class="receipt-text-link" title="Restore ledger tape from JSON">[Restore]</button>
+              <input type="file" id="import-json-input" accept=".json" style="display: none;" aria-label="Restore history from JSON file">
+              <button type="button" id="clear-history-btn" class="receipt-text-link receipt-danger-link" title="Clear all history entries">[Clear]</button>
+            </div>
+          </div>
+
+          <!-- Running advice stat -->
+          <div class="stat-ledger-bar" id="stats-banner">
+            <div class="stat-top-row">
+              <span class="stat-title">Advice followed:</span>
+              <span class="stat-score-val" id="stat-percent">—</span>
+            </div>
+            <p class="stat-subtext" id="stat-details">Mark decisions below to track your follow rate.</p>
+          </div>
+
+          <!-- History items tape -->
+          <div id="history-list" class="history-entries">
+            <!-- Populated via app.js -->
+          </div>
+
+          <div id="history-empty" class="history-empty">
+            <p>No past decisions recorded on this tape.</p>
+          </div>
+        </section>
+
+        <!-- Receipt Footer -->
+        <footer class="receipt-end">
+          <div class="perforation" aria-hidden="true"></div>
+          <p class="end-text">*** END OF DECISION LEDGER ***</p>
+        </footer>
+      </div>
+
+      <!-- Serrated torn edge at bottom -->
+      <div class="receipt-tear receipt-tear-bottom" aria-hidden="true"></div>
+    </article>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

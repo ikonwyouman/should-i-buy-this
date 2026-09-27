@@ -1,0 +1,967 @@
+/* ==========================================================================
+   Should I Buy This — Financial Decision Ledger / Paper Slip Style
+   Permanent Dark Theme: Deep Charcoal-Olive (#171813) & Warm Parchment (#ece7d8)
+   Zero SaaS card tropes, zero drop-shadows, zero rounded-corner-everything.
+   ========================================================================== */
+
+:root {
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+
+  /* Palette */
+  --color-bg: #171813;              /* deep charcoal-olive background */
+  --color-paper: #1e2019;           /* dark paper ledger slip */
+  --color-paper-subtle: #151611;    /* recessed register line background */
+  --color-border: #38392f;          /* perforation & divider lines */
+  --color-border-subtle: #292a22;
+
+  --color-text-main: #ece7d8;       /* warm parchment primary text */
+  --color-text-muted: #9d9a8a;      /* olive-grey secondary text */
+  --color-text-dim: #606254;        /* faint guide markings */
+
+  /* Outcome Verdict Colors (USED EXCLUSIVELY FOR VERDICTS, NOWHERE ELSE) */
+  --verdict-buy: #86ab8a;           /* sage green stamp */
+  --verdict-sleep: #d8ab63;         /* accent gold stamp */
+  --verdict-skip: #d97a5c;          /* soft rust stamp */
+
+  /* Focus ring */
+  --color-focus: #d8ab63;
+}
+
+/* Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-serif);
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 2.5rem 1rem 4rem;
+}
+
+/* Wrapper */
+.receipt-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Single Narrow Vertical Receipt Card */
+.receipt {
+  width: 100%;
+  max-width: 480px;
+  background-color: var(--color-paper);
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  position: relative;
+  /* NO rounded corners, NO drop shadows */
+}
+
+/* Serrated Zigzag Torn Edges (Repeating Diagonal CSS Gradient) */
+.receipt-tear {
+  width: 100%;
+  height: 10px;
+  background-repeat: repeat-x;
+  background-size: 10px 10px;
+}
+
+.receipt-tear-top {
+  background-image: 
+    linear-gradient(135deg, var(--color-bg) 5px, transparent 5px),
+    linear-gradient(-135deg, var(--color-bg) 5px, transparent 5px);
+  background-position: 0 0;
+}
+
+.receipt-tear-bottom {
+  background-image: 
+    linear-gradient(45deg, var(--color-bg) 5px, transparent 5px),
+    linear-gradient(-45deg, var(--color-bg) 5px, transparent 5px);
+  background-position: 0 0;
+}
+
+/* Receipt Body */
+.receipt-body {
+  padding: 1.5rem 1.75rem;
+}
+
+/* Receipt Header */
+.receipt-header {
+  text-align: center;
+  padding-bottom: 0.5rem;
+}
+
+.receipt-title {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text-main);
+  margin-bottom: 0.2rem;
+}
+
+.receipt-subtitle {
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin-bottom: 0.65rem;
+}
+
+.receipt-meta {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-text-dim);
+  display: flex;
+  justify-content: space-between;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Perforation Line (Thin Dashed Divider) */
+.perforation {
+  border-bottom: 1px dashed var(--color-border);
+  margin: 1.25rem 0;
+}
+
+/* Preset Scenarios */
+.preset-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.preset-label {
+  font-family: var(--font-serif);
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.preset-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.preset-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  padding: 0.3rem 0.55rem;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.preset-link:hover {
+  color: var(--color-text-main);
+  border-color: var(--color-text-muted);
+  background-color: var(--color-paper-subtle);
+}
+
+/* Form Styles */
+.form-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.3rem;
+}
+
+.field-input {
+  width: 100%;
+  background-color: var(--color-paper-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  color: var(--color-text-main);
+  padding: 0.65rem 0.75rem;
+  min-height: 44px;
+  outline: none;
+  font-size: 0.9375rem;
+  transition: border-color 0.15s ease;
+}
+
+.field-input.mono-input {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.field-input.text-input {
+  font-family: var(--font-serif);
+}
+
+.field-input::placeholder {
+  color: var(--color-text-dim);
+}
+
+.field-input:focus {
+  border-color: var(--color-focus);
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.15rem;
+}
+
+.ledger-btn {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.75rem 1rem;
+  min-height: 46px;
+  border-radius: 0;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.primary-btn {
+  flex: 1;
+  background-color: #2b2d23;
+  color: var(--color-text-main);
+  border-color: #4d4f41;
+  font-weight: 600;
+}
+
+.primary-btn:hover {
+  background-color: #35382b;
+  border-color: var(--color-text-main);
+}
+
+.secondary-btn {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.secondary-btn:hover {
+  background-color: var(--color-paper-subtle);
+  color: var(--color-text-main);
+}
+
+/* Results Slip */
+.results-slip {
+  position: relative;
+}
+
+.slip-header {
+  margin-bottom: 0.85rem;
+}
+
+.slip-title {
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+/* Danger Alert */
+.danger-slip-notice {
+  border: 1px solid var(--verdict-skip);
+  background-color: rgba(217, 122, 92, 0.08);
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.danger-slip-notice.hidden {
+  display: none;
+}
+
+.danger-flag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--verdict-skip);
+  display: block;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+.danger-msg {
+  font-family: var(--font-serif);
+  font-size: 0.8125rem;
+  color: var(--color-text-main);
+  line-height: 1.4;
+}
+
+/* 3 Raw Numbers: Dotted Ledger Lines */
+.ledger-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.4rem;
+}
+
+.ledger-line {
+  display: flex;
+  align-items: baseline;
+  font-size: 0.875rem;
+}
+
+.line-name {
+  font-family: var(--font-serif);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.line-fill {
+  flex: 1;
+  border-bottom: 1px dotted var(--color-border);
+  margin: 0 0.5rem 0.2rem;
+  min-width: 0.5rem;
+}
+
+.line-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-main);
+  white-space: nowrap;
+}
+
+.ledger-line.highlight-metric .line-name {
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+.ledger-line.highlight-metric .line-num {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* Rubber Stamp Verdict Container */
+.stamp-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 72px;
+  margin: 1.25rem 0 1rem;
+}
+
+/* Actual Rubber-Stamp Shape: Bordered Box, Rotated, Uppercase, Inked Texture */
+.rubber-stamp {
+  display: inline-block;
+  border: 3px double currentColor;
+  border-radius: 0; /* NO rounded pill */
+  padding: 0.55rem 1.6rem;
+  text-align: center;
+  transform: rotate(-2deg);
+  transform-origin: center center;
+  user-select: none;
+  background: transparent;
+  position: relative;
+  box-shadow: inset 0 0 1px currentColor, 0 0 1px currentColor;
+  text-shadow: 0 0 0.5px currentColor;
+}
+
+.stamp-label {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.1;
+  display: block;
+}
+
+/* Verdict States */
+.verdict-empty {
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-dim);
+  transform: none;
+  padding: 0.4rem 1.2rem;
+}
+
+.verdict-empty .stamp-label {
+  font-size: 0.875rem;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.verdict-buy {
+  color: var(--verdict-buy);
+  border-color: var(--verdict-buy);
+}
+
+.verdict-sleep {
+  color: var(--verdict-sleep);
+  border-color: var(--verdict-sleep);
+}
+
+.verdict-skip {
+  color: var(--verdict-skip);
+  border-color: var(--verdict-skip);
+}
+
+/* Conversational Reasoning Narrative */
+.reasoning-envelope {
+  padding: 0.75rem 0;
+  text-align: center;
+}
+
+.reasoning-paragraph {
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  color: var(--color-text-main);
+  line-height: 1.6;
+}
+
+/* Mechanics Disclosure */
+.mechanics-disclosure {
+  border-top: 1px dashed var(--color-border);
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+}
+
+.mechanics-summary {
+  font-family: var(--font-serif);
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.mechanics-summary:hover {
+  color: var(--color-text-main);
+}
+
+.mechanics-body {
+  padding-top: 0.65rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.mechanic-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  border-bottom: 1px dotted var(--color-border-subtle);
+  padding: 0.15rem 0;
+}
+
+.mechanic-row.danger-rule {
+  color: var(--verdict-skip);
+  border-bottom-color: rgba(217, 122, 92, 0.3);
+}
+
+/* History Section */
+.history-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.history-heading {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.history-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.receipt-text-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0.15rem 0.2rem;
+  transition: color 0.15s ease;
+}
+
+.receipt-text-link:hover {
+  color: var(--color-text-main);
+}
+
+.receipt-danger-link:hover {
+  color: var(--verdict-skip) !important;
+}
+
+.slip-utility-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.65rem;
+}
+
+.print-btn {
+  font-size: 0.6875rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.04em;
+}
+
+.print-btn:hover {
+  color: var(--verdict-sleep);
+}
+
+/* Running Advice Stat */
+.stat-ledger-bar {
+  border: 1px solid var(--color-border);
+  background-color: var(--color-paper-subtle);
+  padding: 0.65rem 0.85rem;
+}
+
+.stat-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-mono);
+}
+
+.stat-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.stat-score-val {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.stat-subtext {
+  font-family: var(--font-serif);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+/* History Entries */
+.history-entries {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-entry-row {
+  border-bottom: 1px dashed var(--color-border-subtle);
+  padding: 0.65rem 0;
+}
+
+.history-entry-row:last-child {
+  border-bottom: none;
+}
+
+.history-entry-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.entry-name {
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  color: var(--color-text-main);
+}
+
+.entry-verdict-box {
+  font-family: var(--font-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid currentColor;
+}
+
+.entry-verdict-box.box-buy { color: var(--verdict-buy); border-color: var(--verdict-buy); }
+.entry-verdict-box.box-sleep { color: var(--verdict-sleep); border-color: var(--verdict-sleep); }
+.entry-verdict-box.box-skip { color: var(--verdict-skip); border-color: var(--verdict-skip); }
+
+.history-entry-details {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.history-entry-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.outcome-buttons {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.receipt-tag-btn {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: 0;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.receipt-tag-btn:hover {
+  color: var(--color-text-main);
+  border-color: var(--color-text-muted);
+}
+
+.receipt-tag-btn.active-bought {
+  color: var(--verdict-buy);
+  border-color: var(--verdict-buy);
+  font-weight: 600;
+}
+
+.receipt-tag-btn.active-skipped {
+  color: var(--verdict-skip);
+  border-color: var(--verdict-skip);
+  font-weight: 600;
+}
+
+.entry-link-actions {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.entry-sub-link {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  padding: 0.15rem 0.3rem;
+}
+
+.entry-sub-link:hover {
+  color: var(--color-text-main);
+}
+
+.entry-sub-link.delete-link:hover {
+  color: var(--verdict-skip);
+}
+
+/* 48-Hour Cooling Timer Badge */
+.cooling-timer-row {
+  margin: 0.2rem 0 0.35rem;
+}
+
+.cooling-timer {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--verdict-sleep);
+  color: var(--verdict-sleep);
+  background-color: rgba(216, 171, 99, 0.08);
+  letter-spacing: 0.03em;
+}
+
+.cooling-timer.timer-ready {
+  border-color: var(--verdict-buy);
+  color: var(--verdict-buy);
+  background-color: rgba(134, 171, 138, 0.08);
+}
+
+/* Paper Tear-Off Delete Animation */
+@keyframes tearOffSlip {
+  0% {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+    max-height: 140px;
+  }
+  35% {
+    opacity: 0.85;
+    transform: translateX(24px) rotate(2.5deg) skewY(-1.5deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%) rotate(5deg) skewY(-3deg);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom-color: transparent;
+  }
+}
+
+.history-entry-row.tearing-off {
+  animation: tearOffSlip 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* History Empty */
+.history-empty {
+  text-align: center;
+  padding: 1.5rem 0;
+  font-family: var(--font-serif);
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--color-text-dim);
+}
+
+/* Receipt End */
+.receipt-end {
+  text-align: center;
+}
+
+.end-text {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+}
+
+/* ==========================================================================
+   The Orchestrated Reveal Sequence (Calculate Click)
+   One deliberate moment:
+   0. Paper spool-feed mechanical advance.
+   1. The 4 ledger lines reveal staggered by ~140ms (sliding slightly & fading in).
+   2. Brief pause (~0.5s).
+   3. Verdict stamps onto the paper (scale down past size, overshoot bounce, slight rotation).
+   4. Explanation text fades in below.
+   ========================================================================== */
+
+@keyframes spoolFeed {
+  0% {
+    transform: translateY(-8px);
+    opacity: 0.95;
+  }
+  60% {
+    transform: translateY(2px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.results-slip.is-revealing {
+  animation: spoolFeed 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes lineSlideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes stampImpact {
+  0% {
+    opacity: 0;
+    transform: scale(2.2) rotate(-8deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.92) rotate(-1.5deg);
+  }
+  80% {
+    transform: scale(1.03) rotate(-2.2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-2deg);
+  }
+}
+
+@keyframes narrativeFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dangerNoticeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sequence bindings when .is-revealing is applied */
+.is-revealing #metric-line-uses {
+  animation: lineSlideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0ms both;
+}
+
+.is-revealing #metric-line-cost {
+  animation: lineSlideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 140ms both;
+}
+
+.is-revealing #metric-line-budget {
+  animation: lineSlideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 280ms both;
+}
+
+.is-revealing #metric-line-opportunity {
+  animation: lineSlideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 420ms both;
+}
+
+.is-revealing .danger-slip-notice:not(.hidden) {
+  animation: dangerNoticeIn 0.3s ease-out 900ms both;
+}
+
+/* Rubber Stamp lands after the lines finish (~700ms) + 550ms pause = 1250ms */
+.is-revealing #verdict-banner:not(.verdict-empty) {
+  animation: stampImpact 0.45s cubic-bezier(0.2, 0.8, 0.25, 1) 1250ms both;
+}
+
+/* Explanation text fades in right after stamp impact lands (1250ms + 470ms = 1720ms) */
+.is-revealing .reasoning-envelope {
+  animation: narrativeFadeIn 0.4s ease-out 1720ms both;
+}
+
+/* ==========================================================================
+   Prefers Reduced Motion: Disable all motion and show final state instantly
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .results-slip.is-revealing,
+  .is-revealing #metric-line-uses,
+  .is-revealing #metric-line-cost,
+  .is-revealing #metric-line-budget,
+  .is-revealing #metric-line-opportunity,
+  .is-revealing #verdict-banner,
+  .is-revealing .reasoning-envelope,
+  .is-revealing .danger-slip-notice,
+  .history-entry-row.tearing-off {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .rubber-stamp:not(.verdict-empty) {
+    transform: rotate(-2deg) !important;
+  }
+}
+
+/* ==========================================================================
+   Print / PDF Styles: Crisp black & white ledger slip on paper
+   ========================================================================== */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+  }
+
+  .receipt-wrapper {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .receipt {
+    max-width: 100% !important;
+    border: 1px solid #000000 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .receipt-title,
+  .field-label,
+  .line-name,
+  .line-num,
+  .entry-name,
+  .reasoning-paragraph {
+    color: #000000 !important;
+  }
+
+  .receipt-subtitle,
+  .preset-label,
+  .stat-title,
+  .stat-subtext,
+  .history-entry-details {
+    color: #444444 !important;
+  }
+
+  /* Hide interactive browser controls when printing paper slip */
+  .receipt-tear,
+  .preset-section,
+  .form-actions,
+  .slip-utility-row,
+  .history-actions-bar,
+  .outcome-buttons,
+  .entry-link-actions,
+  .mechanics-disclosure {
+    display: none !important;
+  }
+
+  .field-input {
+    background: #ffffff !important;
+    border: none !important;
+    border-bottom: 1px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  .line-fill {
+    border-bottom: 1px dotted #555555 !important;
+  }
+
+  .rubber-stamp {
+    border: 3px double #000000 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .perforation {
+    border-bottom: 1px dashed #444444 !important;
+  }
+}
